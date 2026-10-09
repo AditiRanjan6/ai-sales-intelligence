@@ -1,0 +1,21 @@
+lead_id,company_name,industry,company_size,annual_revenue,location,lead_source,website_activity,email_engagement,technology_fit,buying_signal,deal_size,interactions,last_activity_days,converted
+L001,Vertex Solutions,SaaS,201-500,42000000,New York,LinkedIn,High,High,High,Strong,85000,12,2,1
+L002,BluePeak Analytics,FinTech,51-200,18000000,Chicago,Website,High,Medium,High,Strong,62000,8,5,1
+L003,NovaRetail,Retail,501-1000,75000000,Dallas,Referral,Medium,High,Medium,Moderate,110000,15,7,1
+L004,CloudForge Systems,Technology,51-200,24000000,Austin,Outbound,High,High,High,Strong,95000,10,3,1
+L005,GreenGrid Energy,Energy,201-500,51000000,Denver,LinkedIn,Medium,Medium,High,Moderate,125000,7,12,0
+L006,UrbanNest Realty,Real Estate,51-200,12000000,Miami,Website,Low,Low,Medium,Weak,45000,3,28,0
+L007,MedCore Labs,Healthcare,501-1000,92000000,Boston,Referral,High,High,High,Strong,150000,18,4,1
+L008,FinEdge Capital,Finance,201-500,68000000,New York,LinkedIn,Medium,High,High,Strong,135000,11,6,1
+L009,BrightPath Education,Education,51-200,9000000,Atlanta,Outbound,Low,Medium,Medium,Weak,38000,4,21,0
+L010,DataPulse AI,Artificial Intelligence,11-50,6500000,San Francisco,Website,High,High,High,Strong,72000,14,2,1
+L011,MetroLogix,Logistics,201-500,47000000,Los Angeles,Outbound,Medium,Medium,High,Moderate,88000,9,10,0
+L012,HealthBridge,Healthcare,51-200,15000000,Seattle,LinkedIn,High,High,Medium,Strong,57000,13,3,1
+L013,CoreBank Technologies,FinTech,1001-5000,210000000,New York,Referral,High,High,High,Strong,250000,21,1,1
+L014,MarketNest,Marketing,11-50,4200000,Portland,Website,Medium,Low,Medium,Weak,28000,5,18,0
+L015,AutoSphere,Automotive,501-1000,88000000,Detroit,LinkedIn,Medium,Medium,High,Moderate,140000,8,9,0
+L016,QuantumWorks,Technology,201-500,63000000,San Jose,Referral,High,High,High,Strong,175000,16,2,1
+L017,FreshCart,Consumer Goods,51-200,11000000,Philadelphia,Website,Medium,Medium,Medium,Moderate,52000,6,11,0
+L018,SecureNet Cybersecurity,Cybersecurity,201-500,39000000,Washington DC,Outbound,High,High,High,Strong,105000,12,4,1
+L019,LearnSphere,EdTech,51-200,13500000,New York,LinkedIn,Medium,Medium,Medium,Moderate,48000,7,14,0
+L020,BuildPro Construction,Construction,501-1000,97000000,Houston,Referral,High,Medium,High,Moderate,160000,10,8,1

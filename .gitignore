@@ -42,4 +42,5 @@ data/*.sqlite3
 # Local lead data and test imports
 ai_sales_intelligence_test_leads.csv
 # Local data files, databases, and imports
-data/
+data/*
+!data/leads.csv
