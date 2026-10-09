@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# IDE
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# Local databases
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+# SQLite databases anywhere in the project
+*.db
+*.sqlite
+*.sqlite3
+
+# Local lead data and test imports
+ai_sales_intelligence_test_leads.csv
+# Local data files, databases, and imports
+data/

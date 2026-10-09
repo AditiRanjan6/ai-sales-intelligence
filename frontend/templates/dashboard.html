@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Sales Intelligence</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='style.css') }}"
+    >
+</head>
+
+<body>
+
+<div class="creator-attribution">
+    <span class="creator-attribution-name">Made by Aditi Ranjan</span>
+    <nav class="creator-attribution-links" aria-label="Creator links">
+        <a
+            href="https://github.com/AditiRanjan6"
+            target="_blank"
+            rel="noopener noreferrer"
+        >GitHub: AditiRanjan6</a>
+        <a
+            href="https://www.linkedin.com/in/aditi-ranjan-51780b255/"
+            target="_blank"
+            rel="noopener noreferrer"
+        >LinkedIn: Aditi Ranjan</a>
+    </nav>
+</div>
+
+<div class="app-shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-mark">AI</div>
+
+            <div>
+                <h1>Sales Intelligence</h1>
+                <span>Decision Platform</span>
+            </div>
+        </div>
+
+        <nav class="navigation">
+
+            <a href="#" class="nav-item active">
+                <span>▦</span>
+                Dashboard
+            </a>
+
+            <a href="#leads" class="nav-item">
+                <span>◉</span>
+                Leads
+            </a>
+
+            <a href="#analytics" class="nav-item">
+                <span>◒</span>
+                Analytics
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <span class="status-dot"></span>
+            System operational
+        </div>
+
+    </aside>
+
+
+    <!-- Main -->
+    <main class="main-content">
+
+        <!-- Header -->
+        <header class="topbar">
+
+            <div>
+                <p class="eyebrow">SALES INTELLIGENCE</p>
+
+                <h2>
+                    Revenue Command Center
+                </h2>
+
+                <p class="subtitle">
+                    Monitor your pipeline and identify the leads most likely to convert.
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button class="import-button" id="import-leads-button" type="button" aria-haspopup="dialog" aria-controls="import-modal">
+                    <svg class="import-button-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                        <path d="M10 13V3m0 0L6.5 6.5M10 3l3.5 3.5M4 12.5v3A1.5 1.5 0 0 0 5.5 17h9a1.5 1.5 0 0 0 1.5-1.5v-3" />
+                    </svg>
+                    Import Leads
+                </button>
+                <div class="header-status">
+                    <span class="status-dot"></span>
+                    Live data
+                </div>
+            </div>
+
+        </header>
+
+
+        <!-- KPI Cards -->
+        <section class="metrics-grid" id="analytics">
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    TOTAL LEADS
+                </div>
+
+                <div class="metric-value" id="total-leads">
+                    --
+                </div>
+
+                <div class="metric-meta">
+                    Active prospects
+                </div>
+
+            </div>
+
+
+            <div class="metric-card hot-card">
+
+                <div class="metric-label">
+                    HOT LEADS
+                </div>
+
+                <div class="metric-value" id="hot-leads">
+                    --
+                </div>
+
+                <div class="metric-meta">
+                    High conversion potential
+                </div>
+
+            </div>
+
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    CONVERSION RATE
+                </div>
+
+                <div class="metric-value" id="conversion-rate">
+                    --
+                </div>
+
+                <div class="metric-meta">
+                    Historical conversion
+                </div>
+
+            </div>
+
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    PIPELINE VALUE
+                </div>
+
+                <div class="metric-value" id="pipeline-value">
+                    --
+                </div>
+
+                <div class="metric-meta">
+                    Total opportunity
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Lead Intelligence -->
+        <section class="panel" id="leads">
+
+            <div class="panel-header">
+
+                <div>
+                    <p class="eyebrow">
+                        LEAD INTELLIGENCE
+                    </p>
+
+                    <h3>
+                        Priority Pipeline
+                    </h3>
+                </div>
+
+                <div class="search-box">
+
+                    <input
+                        type="text"
+                        id="search-input"
+                        placeholder="Search companies..."
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Company</th>
+                            <th>Industry</th>
+                            <th>Location</th>
+                            <th>Deal Size</th>
+                            <th>Score</th>
+                            <th>Priority</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="leads-table">
+
+                        <tr>
+                            <td colspan="6" class="loading">
+                                Loading intelligence...
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- Distribution -->
+        <section class="distribution-grid">
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">
+                            PIPELINE
+                        </p>
+
+                        <h3>
+                            Lead Distribution
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="distribution">
+
+                    <div class="distribution-row">
+
+                        <div class="distribution-info">
+                            <span>HOT</span>
+                            <strong id="hot-count">--</strong>
+                        </div>
+
+                        <div class="bar">
+                            <div
+                                class="bar-fill hot"
+                                id="hot-bar"
+                            ></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="distribution-row">
+
+                        <div class="distribution-info">
+                            <span>WARM</span>
+                            <strong id="warm-count">--</strong>
+                        </div>
+
+                        <div class="bar">
+                            <div
+                                class="bar-fill warm"
+                                id="warm-bar"
+                            ></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="distribution-row">
+
+                        <div class="distribution-info">
+                            <span>COLD</span>
+                            <strong id="cold-count">--</strong>
+                        </div>
+
+                        <div class="bar">
+                            <div
+                                class="bar-fill cold"
+                                id="cold-bar"
+                            ></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel insight-panel">
+
+                <p class="eyebrow">
+                    AI SIGNAL
+                </p>
+
+                <h3>
+                    Prioritize your HOT leads.
+                </h3>
+
+                <p>
+                    These prospects demonstrate stronger buying signals,
+                    engagement and technology fit.
+                </p>
+
+                <div class="insight-stat">
+
+                    <span>HOT PIPELINE</span>
+
+                    <strong id="hot-percentage">
+                        --
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<div
+    class="import-modal-overlay"
+    id="import-modal"
+    aria-hidden="true"
+    hidden
+>
+    <section
+        class="import-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="import-modal-title"
+    >
+        <header class="import-modal-header">
+            <div>
+                <p class="eyebrow">IMPORT DATA</p>
+                <h2 id="import-modal-title">Import Leads</h2>
+            </div>
+            <button
+                class="lead-modal-close"
+                id="import-modal-close"
+                type="button"
+                aria-label="Close import modal"
+            >&times;</button>
+        </header>
+
+        <div class="import-modal-body">
+            <div class="import-note" id="import-instructions">
+                Choose a CSV file up to 5 MB with one lead per row. Include all fields in the sample CSV; existing or duplicate lead IDs are skipped. Review validation results before confirming.
+            </div>
+
+            <div class="import-actions">
+                <label class="import-file-picker" for="csv-file-input">
+                    <input id="csv-file-input" type="file" accept=".csv,text/csv" aria-describedby="import-instructions" />
+                    <span id="csv-file-name">Choose a CSV file</span>
+                </label>
+                <a class="secondary-link" href="/lead-import/sample-csv">Download sample CSV</a>
+            </div>
+
+            <div class="import-status" id="import-status" hidden></div>
+
+            <div class="import-preview" id="import-preview" hidden>
+                <div class="import-preview-summary">
+                    <div>
+                        <span class="lead-detail-label">TOTAL ROWS</span>
+                        <strong id="preview-total-rows">0</strong>
+                    </div>
+                    <div>
+                        <span class="lead-detail-label">VALID</span>
+                        <strong id="preview-valid-rows">0</strong>
+                    </div>
+                    <div>
+                        <span class="lead-detail-label">INVALID</span>
+                        <strong id="preview-invalid-rows">0</strong>
+                    </div>
+                    <div>
+                        <span class="lead-detail-label">DUPLICATES</span>
+                        <strong id="preview-duplicate-rows">0</strong>
+                    </div>
+                </div>
+
+                <div class="import-preview-table-wrap">
+                    <table class="import-preview-table">
+                        <thead>
+                            <tr>
+                                <th>Row</th>
+                                <th>Lead ID</th>
+                                <th>Company</th>
+                                <th>Industry</th>
+                                <th>Location</th>
+                                <th>Deal Size</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="import-preview-rows"></tbody>
+                    </table>
+                </div>
+
+                <div class="import-invalid-section" id="import-invalid-section" hidden>
+                    <h3>Invalid rows</h3>
+                    <div id="import-invalid-list" class="import-invalid-list"></div>
+                </div>
+
+                <div class="import-modal-footer">
+                    <button class="secondary-button" id="import-cancel-button" type="button">Cancel</button>
+                    <button class="primary-button" id="import-confirm-button" type="button">Confirm import</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div
+    class="lead-modal-overlay"
+    id="lead-modal"
+    aria-hidden="true"
+    hidden
+>
+    <section
+        class="lead-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lead-modal-title"
+    >
+        <header class="lead-modal-header">
+            <div>
+                <p class="eyebrow">LEAD INTELLIGENCE</p>
+                <h2 id="lead-modal-title">Lead details</h2>
+                <p class="lead-modal-id" id="lead-modal-id"></p>
+            </div>
+            <button
+                class="lead-modal-close"
+                id="lead-modal-close"
+                type="button"
+                aria-label="Close lead details"
+            >&times;</button>
+        </header>
+
+        <div class="lead-modal-content" id="lead-modal-content">
+            <div class="lead-modal-highlights">
+                <div class="lead-score-card">
+                    <span class="lead-detail-label">LEAD SCORE</span>
+                    <strong id="lead-detail-score">—</strong>
+                    <span class="lead-score-out-of">out of 100</span>
+                </div>
+                <div class="lead-priority-card">
+                    <span class="lead-detail-label">PRIORITY</span>
+                    <span class="priority" id="lead-detail-priority">—</span>
+                </div>
+            </div>
+
+            <div class="lead-detail-grid">
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">COMPANY NAME</span>
+                    <strong id="lead-detail-company">—</strong>
+                </div>
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">INDUSTRY</span>
+                    <strong id="lead-detail-industry">—</strong>
+                </div>
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">COMPANY SIZE</span>
+                    <strong id="lead-detail-company-size">—</strong>
+                </div>
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">ANNUAL REVENUE</span>
+                    <strong id="lead-detail-revenue">—</strong>
+                </div>
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">LOCATION</span>
+                    <strong id="lead-detail-location">—</strong>
+                </div>
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">LEAD SOURCE</span>
+                    <strong id="lead-detail-source">—</strong>
+                </div>
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">WEBSITE ACTIVITY</span>
+                    <strong id="lead-detail-website-activity">—</strong>
+                </div>
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">EMAIL ENGAGEMENT</span>
+                    <strong id="lead-detail-email-engagement">—</strong>
+                </div>
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">TECHNOLOGY FIT</span>
+                    <strong id="lead-detail-technology-fit">—</strong>
+                </div>
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">BUYING SIGNAL</span>
+                    <strong id="lead-detail-buying-signal">—</strong>
+                </div>
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">DEAL SIZE</span>
+                    <strong id="lead-detail-deal-size">—</strong>
+                </div>
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">INTERACTIONS</span>
+                    <strong id="lead-detail-interactions">—</strong>
+                </div>
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">LAST ACTIVITY</span>
+                    <strong id="lead-detail-last-activity">—</strong>
+                </div>
+                <div class="lead-detail-item">
+                    <span class="lead-detail-label">CONVERTED STATUS</span>
+                    <strong id="lead-detail-converted">—</strong>
+                </div>
+            </div>
+
+            <section class="lead-recommendation" aria-labelledby="lead-recommendation-title">
+                <header class="lead-recommendation-header">
+                    <div>
+                        <p class="eyebrow">SALES GUIDANCE</p>
+                        <h3 id="lead-recommendation-title">AI Sales Recommendation</h3>
+                    </div>
+                    <div class="lead-recommendation-urgency">
+                        <span class="lead-detail-label">URGENCY</span>
+                        <span id="lead-recommendation-urgency" class="priority">—</span>
+                    </div>
+                </header>
+
+                <div class="lead-recommendation-body">
+                    <div class="lead-recommendation-why">
+                        <span class="lead-detail-label">WHY THIS LEAD MATTERS</span>
+                        <p id="lead-recommendation-why">—</p>
+                    </div>
+                    <div class="lead-recommendation-signals">
+                        <span class="lead-detail-label">KEY SIGNALS</span>
+                        <ul id="lead-recommendation-signals"></ul>
+                    </div>
+                    <div class="lead-recommendation-actions">
+                        <div>
+                            <span class="lead-detail-label">RECOMMENDED ACTION</span>
+                            <p id="lead-recommendation-action">—</p>
+                        </div>
+                        <div>
+                            <span class="lead-detail-label">NEXT BEST ACTION</span>
+                            <p id="lead-recommendation-next-action">—</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div
+            class="lead-modal-state"
+            id="lead-modal-state"
+            role="status"
+            aria-live="polite"
+            hidden
+        ></div>
+    </section>
+</div>
+
+
+<script>
+
+const API_BASE = window.location.origin;
+
+function closeLeadDetails() {
+
+    const modal = document.getElementById("lead-modal");
+
+    modal.hidden = true;
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("lead-modal-open");
+}
+
+function renderLeadRecommendation(recommendation) {
+
+    const why = document.getElementById("lead-recommendation-why");
+    const signals = document.getElementById("lead-recommendation-signals");
+    const action = document.getElementById("lead-recommendation-action");
+    const nextAction = document.getElementById(
+        "lead-recommendation-next-action"
+    );
+    const urgency = document.getElementById(
+        "lead-recommendation-urgency"
+    );
+
+    signals.replaceChildren();
+    if (!recommendation) {
+        why.textContent = "Recommendation unavailable.";
+        action.textContent = "No sales action is available.";
+        nextAction.textContent = "Please try again later.";
+        urgency.textContent = "—";
+        urgency.className = "priority";
+        return;
+    }
+
+    why.textContent = recommendation.why_this_lead_matters;
+    action.textContent = recommendation.recommended_action;
+    nextAction.textContent = recommendation.next_best_action;
+
+    recommendation.key_signals.forEach(signal => {
+        const item = document.createElement("li");
+        item.textContent = signal;
+        signals.appendChild(item);
+    });
+
+    const urgencyValue = String(recommendation.urgency).toUpperCase();
+    urgency.textContent = urgencyValue;
+    urgency.className = "priority";
+
+    const urgencyClasses = {
+        HIGH: "hot",
+        MEDIUM: "warm",
+        LOW: "cold"
+    };
+
+    if (urgencyClasses[urgencyValue]) {
+        urgency.classList.add(urgencyClasses[urgencyValue]);
+    }
+}
+
+
+async function openLeadDetails(leadId) {
+
+    const modal = document.getElementById("lead-modal");
+    const content = document.getElementById("lead-modal-content");
+    const state = document.getElementById("lead-modal-state");
+    const title = document.getElementById("lead-modal-title");
+
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("lead-modal-open");
+    title.textContent = "Lead details";
+    content.hidden = true;
+    state.hidden = false;
+    state.className = "lead-modal-state";
+    state.textContent = "Loading lead details...";
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE}/leads/${encodeURIComponent(leadId)}`
+        );
+
+        if (response.status === 404) {
+            throw new Error("This lead could not be found.");
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                `Unable to load lead details (HTTP ${response.status}).`
+            );
+        }
+
+        const lead = await response.json();
+        renderLeadRecommendation(lead.recommendation);
+
+        const displayValue = value =>
+            value === null || value === undefined || value === ""
+                ? "—"
+                : String(value);
+        const setDetail = (id, value) => {
+            document.getElementById(id).textContent = displayValue(value);
+        };
+        const formatDetailCurrency = value =>
+            value === null || value === undefined || value === ""
+                ? "—"
+                : formatCurrency(value);
+
+        title.textContent = displayValue(lead.company_name);
+        setDetail("lead-modal-id", `Lead ID: ${lead.lead_id ?? leadId}`);
+        setDetail("lead-detail-company", lead.company_name);
+        setDetail("lead-detail-industry", lead.industry);
+        setDetail("lead-detail-company-size", lead.company_size);
+        setDetail(
+            "lead-detail-revenue",
+            formatDetailCurrency(lead.annual_revenue)
+        );
+        setDetail("lead-detail-location", lead.location);
+        setDetail("lead-detail-source", lead.lead_source);
+        setDetail("lead-detail-website-activity", lead.website_activity);
+        setDetail("lead-detail-email-engagement", lead.email_engagement);
+        setDetail("lead-detail-technology-fit", lead.technology_fit);
+        setDetail("lead-detail-buying-signal", lead.buying_signal);
+        setDetail(
+            "lead-detail-deal-size",
+            formatDetailCurrency(lead.deal_size)
+        );
+        setDetail("lead-detail-interactions", lead.interactions);
+        setDetail(
+            "lead-detail-last-activity",
+            lead.last_activity_days === null ||
+                lead.last_activity_days === undefined
+                ? null
+                : `${lead.last_activity_days} ${
+                    lead.last_activity_days === 1 ? "day" : "days"
+                } ago`
+        );
+        setDetail(
+            "lead-detail-converted",
+            lead.converted === null || lead.converted === undefined
+                ? null
+                : (lead.converted === true || lead.converted === 1 ||
+                    String(lead.converted).toLowerCase() === "true" ||
+                    String(lead.converted) === "1")
+                    ? "Yes"
+                    : "No"
+        );
+        setDetail("lead-detail-score", lead.lead_score);
+
+        const priority = displayValue(lead.priority).toUpperCase();
+        const priorityElement = document.getElementById("lead-detail-priority");
+        priorityElement.textContent = priority;
+        priorityElement.className = "priority";
+        if (["HOT", "WARM", "COLD"].includes(priority)) {
+            priorityElement.classList.add(priority.toLowerCase());
+        }
+
+        state.hidden = true;
+        content.hidden = false;
+
+    } catch (error) {
+        console.error("Failed to load lead details:", error);
+        content.hidden = true;
+        state.hidden = false;
+        state.className = "lead-modal-state is-error";
+        state.textContent = error.message === "This lead could not be found."
+            ? "This lead could not be found. It may have been removed."
+            : "We couldn't load this lead's details. Please try again.";
+    }
+}
+
+
+document
+    .getElementById("lead-modal-close")
+    .addEventListener("click", closeLeadDetails);
+
+document
+    .getElementById("lead-modal")
+    .addEventListener("click", event => {
+        if (event.target === event.currentTarget) {
+            closeLeadDetails();
+        }
+    });
+
+document.addEventListener("keydown", event => {
+    const leadModal = document.getElementById("lead-modal");
+    const importModal = document.getElementById("import-modal");
+
+    if (event.key === "Escape") {
+        if (!leadModal.hidden) {
+            closeLeadDetails();
+        } else if (!importModal.hidden) {
+            closeImportModal();
+        }
+    } else if (event.key === "Tab" && !importModal.hidden) {
+        const focusable = Array.from(
+            importModal.querySelectorAll(
+                'button:not([disabled]), a[href], input:not([disabled])'
+            )
+        );
+        if (!focusable.length) {
+            return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    }
+});
+
+const importState = {
+    previewId: null,
+    requestController: null,
+    previewing: false,
+    confirming: false,
+    imported: false,
+    operationId: 0,
+};
+
+function openImportModal() {
+    const modal = document.getElementById("import-modal");
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("lead-modal-open");
+    resetImportState();
+    document.getElementById("import-modal-close").focus();
+}
+
+function closeImportModal() {
+    if (importState.confirming) {
+        return;
+    }
+
+    if (importState.requestController) {
+        importState.requestController.abort();
+    }
+
+    const modal = document.getElementById("import-modal");
+    modal.hidden = true;
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("lead-modal-open");
+    resetImportState();
+    document.getElementById("import-leads-button").focus();
+}
+
+function resetImportState() {
+    importState.operationId += 1;
+    importState.previewId = null;
+    importState.previewing = false;
+    importState.confirming = false;
+    importState.imported = false;
+    importState.requestController = null;
+
+    const fileInput = document.getElementById("csv-file-input");
+    fileInput.value = "";
+    fileInput.disabled = false;
+    document.getElementById("csv-file-name").textContent = "Choose a CSV file";
+
+    const status = document.getElementById("import-status");
+    status.hidden = true;
+    status.className = "import-status";
+    status.textContent = "";
+    status.setAttribute("role", "status");
+
+    document.getElementById("import-preview").hidden = true;
+    document.getElementById("import-invalid-section").hidden = true;
+    document.getElementById("import-invalid-list").replaceChildren();
+    document.getElementById("import-preview-rows").replaceChildren();
+    updateImportControls();
+}
+
+function updateImportControls() {
+    const busy = importState.previewing || importState.confirming;
+    const confirmButton = document.getElementById("import-confirm-button");
+    const cancelButton = document.getElementById("import-cancel-button");
+    const closeButton = document.getElementById("import-modal-close");
+    const fileInput = document.getElementById("csv-file-input");
+    const modal = document.getElementById("import-modal");
+
+    document.getElementById("import-leads-button").disabled = busy;
+    fileInput.disabled = busy;
+    confirmButton.disabled = busy || !importState.previewId || importState.imported;
+    cancelButton.disabled = importState.confirming;
+    closeButton.disabled = importState.confirming;
+    modal.setAttribute("aria-busy", String(busy));
+    confirmButton.textContent = importState.confirming
+        ? "Importing…"
+        : "Confirm import";
+}
+
+function showImportStatus(message, kind = "success") {
+    const status = document.getElementById("import-status");
+    status.hidden = false;
+    status.className = `import-status is-${kind}`;
+    status.setAttribute("role", kind === "error" ? "alert" : "status");
+    status.textContent = message;
+}
+
+async function fetchImportJson(url, options, timeoutMilliseconds) {
+    const controller = new AbortController();
+    importState.requestController = controller;
+    const timeoutId = window.setTimeout(
+        () => controller.abort(new DOMException("The request timed out.", "TimeoutError")),
+        timeoutMilliseconds
+    );
+
+    try {
+        const response = await fetch(url, {
+            ...options,
+            signal: controller.signal,
+        });
+        let payload;
+        try {
+            payload = await response.json();
+        } catch {
+            throw new Error(`The server returned an unreadable response (HTTP ${response.status}).`);
+        }
+
+        if (!response.ok) {
+            throw new Error(payload.detail || "The request could not be completed.");
+        }
+        return payload;
+    } catch (error) {
+        if (controller.signal.aborted) {
+            if (controller.signal.reason?.name === "TimeoutError") {
+                throw new Error("The request took too long. Check your connection and try again.");
+            }
+            throw error;
+        }
+        throw error;
+    } finally {
+        window.clearTimeout(timeoutId);
+        if (importState.requestController === controller) {
+            importState.requestController = null;
+        }
+    }
+}
+
+function appendPreviewCell(row, value) {
+    const cell = document.createElement("td");
+    cell.textContent = value === null || value === undefined || value === ""
+        ? "—"
+        : String(value);
+    row.appendChild(cell);
+}
+
+function renderImportPreview(preview) {
+    const previewPanel = document.getElementById("import-preview");
+    const previewRows = document.getElementById("import-preview-rows");
+    const invalidSection = document.getElementById("import-invalid-section");
+    const invalidList = document.getElementById("import-invalid-list");
+
+    document.getElementById("preview-total-rows").textContent = preview.total_rows;
+    document.getElementById("preview-valid-rows").textContent = preview.valid_rows;
+    document.getElementById("preview-invalid-rows").textContent = preview.invalid_rows;
+    document.getElementById("preview-duplicate-rows").textContent = preview.duplicate_conflicts;
+
+    previewRows.replaceChildren();
+    (preview.preview_rows || []).forEach(item => {
+        const row = document.createElement("tr");
+        appendPreviewCell(row, item.row_number);
+        appendPreviewCell(row, item.lead_id);
+        appendPreviewCell(row, item.company_name);
+        appendPreviewCell(row, item.industry);
+        appendPreviewCell(row, item.location);
+        appendPreviewCell(row, formatCurrency(item.deal_size || 0));
+        const statusCell = document.createElement("td");
+        const statusBadge = document.createElement("span");
+        statusBadge.className = "import-row-valid";
+        statusBadge.textContent = "Valid";
+        statusCell.appendChild(statusBadge);
+        row.appendChild(statusCell);
+        previewRows.appendChild(row);
+    });
+
+    invalidList.replaceChildren();
+    if ((preview.invalid_details || []).length) {
+        invalidSection.hidden = false;
+        preview.invalid_details.forEach(item => {
+            const entry = document.createElement("div");
+            const heading = document.createElement("strong");
+            const name = document.createElement("span");
+            const errors = document.createElement("small");
+            heading.textContent = `Row ${item.row_number}`;
+            name.textContent = item.company_name || item.lead_id || "Unknown record";
+            errors.textContent = (item.errors || []).join("; ");
+            entry.append(heading, name, errors);
+            invalidList.appendChild(entry);
+        });
+    } else {
+        invalidSection.hidden = true;
+    }
+
+    previewPanel.hidden = false;
+    importState.previewId = preview.preview_id;
+    updateImportControls();
+}
+
+async function handleImportFileSelection(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file || importState.previewing || importState.confirming) {
+        return;
+    }
+
+    const operationId = ++importState.operationId;
+    importState.previewId = null;
+    document.getElementById("csv-file-name").textContent = file.name;
+    document.getElementById("import-preview").hidden = true;
+    importState.previewing = true;
+    updateImportControls();
+    showImportStatus("Validating CSV…", "loading");
+
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+        const preview = await fetchImportJson(
+            `${API_BASE}/lead-import/preview`,
+            { method: "POST", body: formData },
+            30000
+        );
+        if (operationId !== importState.operationId) {
+            return;
+        }
+        renderImportPreview(preview);
+        const kind = preview.invalid_rows ? "warning" : "success";
+        showImportStatus(
+            `Preview ready: ${preview.valid_rows} valid row(s), ${preview.invalid_rows} invalid row(s), ${preview.duplicate_conflicts} duplicate conflict(s).`,
+            kind
+        );
+    } catch (error) {
+        if (operationId !== importState.operationId) {
+            return;
+        }
+        if (error.name === "AbortError" && document.getElementById("import-modal").hidden) {
+            return;
+        }
+        console.error("Preview failed:", error);
+        showImportStatus(error.message || "The CSV could not be validated.", "error");
+    } finally {
+        if (operationId === importState.operationId) {
+            importState.previewing = false;
+            updateImportControls();
+        }
+    }
+}
+
+async function confirmImport() {
+    if (!importState.previewId || importState.confirming || importState.imported) {
+        return;
+    }
+
+    const previewId = importState.previewId;
+    importState.confirming = true;
+    updateImportControls();
+    showImportStatus("Importing leads…", "loading");
+
+    try {
+        const result = await fetchImportJson(
+            `${API_BASE}/lead-import/confirm`,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ preview_id: previewId }),
+            },
+            30000
+        );
+        importState.imported = true;
+        importState.previewId = null;
+        updateImportControls();
+
+        try {
+            await Promise.all([loadAnalytics(), loadLeads()]);
+        } catch (refreshError) {
+            console.error("Dashboard refresh failed after import:", refreshError);
+            showImportStatus(
+                `${result.message || "Import complete."} The dashboard could not refresh; reload the page to see the imported leads.`,
+                "warning"
+            );
+            return;
+        }
+
+        importState.confirming = false;
+        closeImportModal();
+    } catch (error) {
+        console.error("Import failed:", error);
+        showImportStatus(
+            importState.requestController === null && error.message.includes("too long")
+                ? `${error.message} The server may have completed the import; check the lead list before retrying.`
+                : error.message || "Import failed. Please try again.",
+            "error"
+        );
+    } finally {
+        importState.confirming = false;
+        updateImportControls();
+    }
+}
+
+async function fetchDashboardJson(url) {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(
+        () => controller.abort(),
+        15000
+    );
+    try {
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) {
+            throw new Error(`Dashboard request failed (HTTP ${response.status}).`);
+        }
+        return await response.json();
+    } catch (error) {
+        if (controller.signal.aborted) {
+            throw new Error("The dashboard refresh timed out. Please try again.");
+        }
+        throw error;
+    } finally {
+        window.clearTimeout(timeoutId);
+    }
+}
+
+async function loadAnalytics() {
+
+    const data = await fetchDashboardJson(
+        `${API_BASE}/analytics/summary`
+    );
+
+
+    document.getElementById("total-leads").textContent =
+        data.total_leads;
+
+    document.getElementById("hot-leads").textContent =
+        data.hot_leads;
+
+    document.getElementById("conversion-rate").textContent =
+        `${data.conversion_rate}%`;
+
+    document.getElementById("pipeline-value").textContent =
+        formatCurrency(data.pipeline_value);
+
+
+    document.getElementById("hot-count").textContent =
+        data.hot_leads;
+
+    document.getElementById("warm-count").textContent =
+        data.warm_leads;
+
+    document.getElementById("cold-count").textContent =
+        data.cold_leads;
+
+
+    const total = data.total_leads;
+
+
+    document.getElementById("hot-bar").style.width =
+        `${(data.hot_leads / total) * 100}%`;
+
+    document.getElementById("warm-bar").style.width =
+        `${(data.warm_leads / total) * 100}%`;
+
+    document.getElementById("cold-bar").style.width =
+        `${(data.cold_leads / total) * 100}%`;
+
+
+    document.getElementById("hot-percentage").textContent =
+        `${Math.round((data.hot_leads / total) * 100)}%`;
+}
+
+
+async function loadLeads() {
+
+    const data = await fetchDashboardJson(
+        `${API_BASE}/leads`
+    );
+
+    renderLeads(data.leads);
+}
+
+
+function renderLeads(leads) {
+
+    const table = document.getElementById("leads-table");
+
+    table.innerHTML = "";
+
+
+    leads.forEach(lead => {
+
+        const row = document.createElement("tr");
+        row.className = "lead-row";
+
+        const companyCell = document.createElement("td");
+        const company = document.createElement("strong");
+        company.textContent = lead.company_name;
+        companyCell.appendChild(company);
+
+        const industryCell = document.createElement("td");
+        industryCell.textContent = lead.industry;
+
+        const locationCell = document.createElement("td");
+        locationCell.textContent = lead.location;
+
+        const dealSizeCell = document.createElement("td");
+        dealSizeCell.textContent = formatCurrency(lead.deal_size);
+
+        const scoreCell = document.createElement("td");
+        const score = document.createElement("div");
+        score.className = "score";
+        const scoreValue = document.createElement("span");
+        scoreValue.textContent = lead.lead_score;
+        const scoreTrack = document.createElement("div");
+        scoreTrack.className = "score-track";
+        const scoreFill = document.createElement("div");
+        scoreFill.className = "score-fill";
+        scoreFill.style.width = `${lead.lead_score}%`;
+        scoreTrack.appendChild(scoreFill);
+        score.append(scoreValue, scoreTrack);
+        scoreCell.appendChild(score);
+
+        const priorityCell = document.createElement("td");
+        const priority = document.createElement("span");
+        const priorityValue = String(lead.priority || "").toUpperCase();
+        priority.className = "priority";
+        priority.textContent = priorityValue;
+        if (["HOT", "WARM", "COLD"].includes(priorityValue)) {
+            priority.classList.add(priorityValue.toLowerCase());
+        }
+        priorityCell.appendChild(priority);
+
+        row.append(
+            companyCell,
+            industryCell,
+            locationCell,
+            dealSizeCell,
+            scoreCell,
+            priorityCell
+        );
+        table.appendChild(row);
+        row.addEventListener("click", () => openLeadDetails(lead.lead_id));
+    });
+}
+
+
+function formatCurrency(value) {
+
+    return new Intl.NumberFormat(
+        "en-US",
+        {
+            style: "currency",
+            currency: "USD",
+            maximumFractionDigits: 0
+        }
+    ).format(value);
+
+}
+
+
+document
+    .getElementById("search-input")
+    .addEventListener("input", async function(event) {
+
+        const query =
+            event.target.value.toLowerCase();
+
+
+        const response = await fetch(
+            `${API_BASE}/leads`
+        );
+
+        const data = await response.json();
+
+
+        const filtered = data.leads.filter(
+            lead =>
+                lead.company_name
+                    .toLowerCase()
+                    .includes(query)
+                ||
+                lead.industry
+                    .toLowerCase()
+                    .includes(query)
+                ||
+                lead.location
+                    .toLowerCase()
+                    .includes(query)
+        );
+
+
+        renderLeads(filtered);
+
+    });
+
+
+document.getElementById("import-leads-button").addEventListener("click", openImportModal);
+document.getElementById("import-modal-close").addEventListener("click", closeImportModal);
+document.getElementById("import-modal").addEventListener("click", event => {
+    if (event.target === event.currentTarget) {
+        closeImportModal();
+    }
+});
+document.getElementById("csv-file-input").addEventListener("change", handleImportFileSelection);
+document.getElementById("import-cancel-button").addEventListener("click", closeImportModal);
+document.getElementById("import-confirm-button").addEventListener("click", confirmImport);
+
+loadAnalytics();
+loadLeads();
+
+</script>
+
+</body>
+</html>
