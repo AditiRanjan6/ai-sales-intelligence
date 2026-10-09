@@ -2,15 +2,18 @@ services:
   - type: web
     name: ai-sales-intelligence
     runtime: python
-    plan: starter
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-    disk:
-      name: sales-intelligence-data
-      mountPath: /var/data
-      sizeGB: 1
+    healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.12
       - key: DATABASE_PATH
-        value: /var/data/sales_intelligence.db
+        value: /tmp/sales_intelligence.db
+      - key: APP_ENV
+        value: production
+      - key: BASIC_AUTH_USERNAME
+        sync: false
+      - key: BASIC_AUTH_PASSWORD
+        sync: false

@@ -1,7 +1,10 @@
+import os
+import secrets
 from pathlib import Path
 
 from fastapi import Body, FastAPI, File, HTTPException, Request, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response, StreamingResponse
+from fastapi.security import HTTPBasic
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.concurrency import run_in_threadpool
@@ -14,6 +17,29 @@ from app.services.recommendations import generate_lead_recommendation
 # --------------------------------------------------
 # Application
 # --------------------------------------------------
+
+def _get_basic_auth_credentials():
+    username = os.getenv("BASIC_AUTH_USERNAME")
+    password = os.getenv("BASIC_AUTH_PASSWORD")
+    is_production = os.getenv("APP_ENV", "").lower() == "production"
+
+    if username is None and password is None:
+        if is_production:
+            raise RuntimeError(
+                "BASIC_AUTH_USERNAME and BASIC_AUTH_PASSWORD must be set in production."
+            )
+        return None, None
+
+    if not username or not password:
+        raise RuntimeError(
+            "BASIC_AUTH_USERNAME and BASIC_AUTH_PASSWORD must both be set."
+        )
+
+    return username, password
+
+
+AUTH_USERNAME, AUTH_PASSWORD = _get_basic_auth_credentials()
+basic_auth = HTTPBasic(auto_error=False)
 
 app = FastAPI(
     title="AI Sales & Customer Intelligence Platform",
@@ -29,6 +55,36 @@ app = FastAPI(
 initialize_database()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+@app.middleware("http")
+async def require_basic_auth(request: Request, call_next):
+    if request.url.path == "/health" or AUTH_USERNAME is None:
+        return await call_next(request)
+
+    try:
+        credentials = await basic_auth(request)
+    except HTTPException:
+        credentials = None
+
+    if (
+        credentials is None
+        or not secrets.compare_digest(
+            credentials.username.encode("utf-8"),
+            AUTH_USERNAME.encode("utf-8"),
+        )
+        or not secrets.compare_digest(
+            credentials.password.encode("utf-8"),
+            AUTH_PASSWORD.encode("utf-8"),
+        )
+    ):
+        return Response(
+            status_code=401,
+            headers={"WWW-Authenticate": 'Basic realm="Sales Intelligence"'},
+        )
+
+    return await call_next(request)
+
 
 app.mount(
     "/static",
