@@ -214,6 +214,40 @@ def get_lead(lead_id: str):
     return enriched_lead
 
 
+@app.delete("/leads/{lead_id}")
+def delete_lead(lead_id: str):
+    """Delete one lead by ID."""
+
+    normalized_lead_id = lead_id.strip()
+    if not normalized_lead_id:
+        raise HTTPException(
+            status_code=400,
+            detail="A valid lead ID is required.",
+        )
+
+    connection = get_connection()
+
+    try:
+        cursor = connection.execute(
+            "DELETE FROM leads WHERE UPPER(lead_id) = UPPER(?)",
+            (normalized_lead_id,),
+        )
+        if cursor.rowcount == 0:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Lead '{normalized_lead_id}' not found.",
+            )
+
+        connection.commit()
+    finally:
+        connection.close()
+
+    return {
+        "message": "Lead deleted successfully.",
+        "lead_id": normalized_lead_id,
+    }
+
+
 # --------------------------------------------------
 # Analytics
 # --------------------------------------------------

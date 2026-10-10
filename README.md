@@ -16,7 +16,8 @@ The live application uses HTTP Basic Authentication. Enter the credentials confi
 
 ### Sales Dashboard
 - Overview of total leads, hot leads, conversion rate, and pipeline value.
-- Priority pipeline displaying company, industry, location, deal size, score, and priority.
+- Interactive KPI cards for filtering hot leads, clearing filters, and explaining dashboard calculations.
+- Priority pipeline displaying company, industry, location, deal size, score, and priority, with individual lead deletion.
 - Lead distribution and sales intelligence insights.
 
 ### Lead Scoring and Recommendations
@@ -27,6 +28,7 @@ The live application uses HTTP Basic Authentication. Enter the credentials confi
 ### Lead Management
 - Lead listing and individual lead details.
 - Company search and pipeline exploration.
+- Authenticated, single-lead deletion with explicit confirmation.
 - SQLite-backed data storage.
 
 ### CSV Import

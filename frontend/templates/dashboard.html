@@ -108,74 +108,79 @@
         <!-- KPI Cards -->
         <section class="metrics-grid" id="analytics">
 
-            <div class="metric-card">
+            <button class="metric-card metric-action-card" id="total-leads-card" type="button" aria-label="Total leads. Clear filters and show all leads.">
 
-                <div class="metric-label">
+                <span class="metric-label">
                     TOTAL LEADS
-                </div>
+                </span>
 
-                <div class="metric-value" id="total-leads">
+                <span class="metric-value" id="total-leads">
                     --
-                </div>
+                </span>
 
-                <div class="metric-meta">
+                <span class="metric-meta">
                     Active prospects
-                </div>
+                </span>
 
-            </div>
+            </button>
 
 
-            <div class="metric-card hot-card">
+            <button class="metric-card metric-action-card hot-card" id="hot-leads-card" type="button" aria-label="Hot leads. Filter the pipeline to all hot leads." aria-pressed="false">
 
-                <div class="metric-label">
+                <span class="metric-label">
                     HOT LEADS
-                </div>
+                </span>
 
-                <div class="metric-value" id="hot-leads">
+                <span class="metric-value" id="hot-leads">
                     --
-                </div>
+                </span>
 
-                <div class="metric-meta">
+                <span class="metric-meta">
                     High conversion potential
-                </div>
+                </span>
 
-            </div>
+            </button>
 
 
-            <div class="metric-card">
+            <button class="metric-card metric-action-card" id="conversion-rate-card" type="button" aria-label="Conversion rate. Show how this metric is calculated.">
 
-                <div class="metric-label">
+                <span class="metric-label">
                     CONVERSION RATE
-                </div>
+                </span>
 
-                <div class="metric-value" id="conversion-rate">
+                <span class="metric-value" id="conversion-rate">
                     --
-                </div>
+                </span>
 
-                <div class="metric-meta">
+                <span class="metric-meta">
                     Historical conversion
-                </div>
+                </span>
 
-            </div>
+            </button>
 
 
-            <div class="metric-card">
+            <button class="metric-card metric-action-card" id="pipeline-value-card" type="button" aria-label="Pipeline value. Show how this metric is calculated.">
 
-                <div class="metric-label">
+                <span class="metric-label">
                     PIPELINE VALUE
-                </div>
+                </span>
 
-                <div class="metric-value" id="pipeline-value">
+                <span class="metric-value" id="pipeline-value">
                     --
-                </div>
+                </span>
 
-                <div class="metric-meta">
+                <span class="metric-meta">
                     Total opportunity
-                </div>
+                </span>
 
-            </div>
+            </button>
 
         </section>
+
+        <div class="metric-explanation" id="metric-explanation" role="status" aria-live="polite" hidden>
+            <p id="metric-explanation-text"></p>
+            <button class="metric-explanation-close" id="metric-explanation-close" type="button" aria-label="Dismiss metric explanation">&times;</button>
+        </div>
 
 
         <!-- Lead Intelligence -->
@@ -193,14 +198,16 @@
                     </h3>
                 </div>
 
-                <div class="search-box">
-
+                <div class="pipeline-controls">
+                    <button class="clear-filter-button" id="clear-hot-filter" type="button" hidden>Clear Hot Filter</button>
+                    <div class="search-box">
                     <input
                         type="text"
                         id="search-input"
                         placeholder="Search companies..."
+                        aria-label="Search leads by company, industry, or location"
                     >
-
+                    </div>
                 </div>
 
             </div>
@@ -219,6 +226,7 @@
                             <th>Deal Size</th>
                             <th>Score</th>
                             <th>Priority</th>
+                            <th>Actions</th>
                         </tr>
 
                     </thead>
@@ -226,7 +234,7 @@
                     <tbody id="leads-table">
 
                         <tr>
-                            <td colspan="6" class="loading">
+                            <td colspan="7" class="loading">
                                 Loading intelligence...
                             </td>
                         </tr>
@@ -239,6 +247,7 @@
 
         </section>
 
+        <div class="dashboard-status" id="dashboard-status" role="status" aria-live="polite" hidden></div>
 
         <!-- Distribution -->
         <section class="distribution-grid">
@@ -569,6 +578,12 @@
                     </div>
                 </div>
             </section>
+            <div class="lead-modal-actions">
+                <button class="delete-lead-button" id="lead-modal-delete" type="button" title="Delete lead" aria-label="Delete this lead">
+                    <span aria-hidden="true">&times;</span>
+                    Delete lead
+                </button>
+            </div>
         </div>
 
         <div
@@ -581,10 +596,45 @@
     </section>
 </div>
 
+<div
+    class="delete-confirmation-overlay"
+    id="delete-confirmation"
+    aria-hidden="true"
+    hidden
+>
+    <section
+        class="delete-confirmation-dialog"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="delete-confirmation-title"
+        aria-describedby="delete-confirmation-message"
+    >
+        <h2 id="delete-confirmation-title">Delete lead?</h2>
+        <p id="delete-confirmation-message">Are you sure you want to delete this lead? This action cannot be undone.</p>
+        <p class="delete-confirmation-target" id="delete-confirmation-target"></p>
+        <div class="delete-confirmation-actions">
+            <button class="secondary-button" id="cancel-delete-button" type="button">Cancel</button>
+            <button class="confirm-delete-button" id="confirm-delete-button" type="button">Delete</button>
+        </div>
+    </section>
+</div>
+
 
 <script>
 
 const API_BASE = window.location.origin;
+
+const dashboardState = {
+    leads: [],
+    hotOnly: false,
+    currentDetailLeadId: null,
+};
+
+const deleteState = {
+    leadId: null,
+    returnFocus: null,
+    inProgress: false,
+};
 
 function closeLeadDetails() {
 
@@ -593,6 +643,7 @@ function closeLeadDetails() {
     modal.hidden = true;
     modal.setAttribute("aria-hidden", "true");
     document.body.classList.remove("lead-modal-open");
+    dashboardState.currentDetailLeadId = null;
 }
 
 function renderLeadRecommendation(recommendation) {
@@ -650,6 +701,7 @@ async function openLeadDetails(leadId) {
     const state = document.getElementById("lead-modal-state");
     const title = document.getElementById("lead-modal-title");
 
+    dashboardState.currentDetailLeadId = leadId;
     modal.hidden = false;
     modal.setAttribute("aria-hidden", "false");
     document.body.classList.add("lead-modal-open");
@@ -676,6 +728,7 @@ async function openLeadDetails(leadId) {
         }
 
         const lead = await response.json();
+        document.getElementById("lead-modal-delete").dataset.leadId = lead.lead_id;
         renderLeadRecommendation(lead.recommendation);
 
         const displayValue = value =>
@@ -769,12 +822,28 @@ document
 document.addEventListener("keydown", event => {
     const leadModal = document.getElementById("lead-modal");
     const importModal = document.getElementById("import-modal");
+    const deleteModal = document.getElementById("delete-confirmation");
 
     if (event.key === "Escape") {
-        if (!leadModal.hidden) {
+        if (!deleteModal.hidden) {
+            closeDeleteConfirmation();
+        } else if (!leadModal.hidden) {
             closeLeadDetails();
         } else if (!importModal.hidden) {
             closeImportModal();
+        }
+    } else if (event.key === "Tab" && !deleteModal.hidden) {
+        event.preventDefault();
+        const cancelButton = document.getElementById("cancel-delete-button");
+        const deleteButton = document.getElementById("confirm-delete-button");
+        if (event.shiftKey && document.activeElement === cancelButton) {
+            deleteButton.focus();
+        } else if (!event.shiftKey && document.activeElement === deleteButton) {
+            cancelButton.focus();
+        } else if (event.shiftKey) {
+            cancelButton.focus();
+        } else {
+            deleteButton.focus();
         }
     } else if (event.key === "Tab" && !importModal.hidden) {
         const focusable = Array.from(
@@ -797,6 +866,117 @@ document.addEventListener("keydown", event => {
         }
     }
 });
+
+function requestLeadDeletion(leadId, trigger) {
+    if (!leadId || deleteState.inProgress) {
+        return;
+    }
+
+    const lead = dashboardState.leads.find(
+        item => String(item.lead_id) === String(leadId)
+    );
+    deleteState.leadId = leadId;
+    deleteState.returnFocus = trigger;
+
+    const target = document.getElementById("delete-confirmation-target");
+    target.textContent = lead
+        ? `Lead: ${lead.company_name} (${lead.lead_id})`
+        : `Lead ID: ${leadId}`;
+
+    const modal = document.getElementById("delete-confirmation");
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+    document.getElementById("cancel-delete-button").focus();
+}
+
+function closeDeleteConfirmation(restoreFocus = true, force = false) {
+    if (deleteState.inProgress && !force) {
+        return;
+    }
+
+    const modal = document.getElementById("delete-confirmation");
+    modal.hidden = true;
+    modal.setAttribute("aria-hidden", "true");
+    deleteState.leadId = null;
+
+    if (restoreFocus && deleteState.returnFocus?.isConnected) {
+        deleteState.returnFocus.focus();
+    }
+    deleteState.returnFocus = null;
+}
+
+async function deleteSelectedLead() {
+    if (!deleteState.leadId || deleteState.inProgress) {
+        return;
+    }
+
+    const leadId = deleteState.leadId;
+    deleteState.inProgress = true;
+    document.getElementById("cancel-delete-button").disabled = true;
+    document.getElementById("confirm-delete-button").disabled = true;
+    document.getElementById("confirm-delete-button").textContent = "Deleting…";
+
+    try {
+        await fetchDashboardJson(
+            `${API_BASE}/leads/${encodeURIComponent(leadId)}`,
+            { method: "DELETE" }
+        );
+        closeDeleteConfirmation(false, true);
+        if (String(dashboardState.currentDetailLeadId) === String(leadId)) {
+            closeLeadDetails();
+        }
+
+        try {
+            await refreshDashboard();
+            showDashboardStatus("Lead deleted successfully.");
+            document.getElementById("search-input").focus();
+        } catch (error) {
+            console.error("Dashboard refresh failed after deletion:", error);
+            showDashboardStatus(
+                "The lead was deleted, but the dashboard could not refresh. Please try again.",
+                "error"
+            );
+        }
+    } catch (error) {
+        console.error("Lead deletion failed:", error);
+        if (error.status === 404 || error.status === undefined) {
+            try {
+                await refreshDashboard();
+                const stillExists = dashboardState.leads.some(
+                    lead => String(lead.lead_id) === String(leadId)
+                );
+                if (!stillExists) {
+                    closeDeleteConfirmation(false, true);
+                    if (String(dashboardState.currentDetailLeadId) === String(leadId)) {
+                        closeLeadDetails();
+                    }
+                    showDashboardStatus(
+                        "This lead is no longer available. The dashboard has been refreshed."
+                    );
+                    document.getElementById("search-input").focus();
+                    return;
+                }
+            } catch (refreshError) {
+                console.error("Dashboard refresh failed after deletion error:", refreshError);
+                showDashboardStatus(
+                    "The delete request could not be confirmed and the dashboard could not refresh. Please try again.",
+                    "error"
+                );
+                return;
+            }
+        }
+        showDashboardStatus(error.message || "The lead could not be deleted.", "error");
+    } finally {
+        deleteState.inProgress = false;
+        document.getElementById("cancel-delete-button").disabled = false;
+        const confirmButton = document.getElementById("confirm-delete-button");
+        confirmButton.disabled = false;
+        confirmButton.textContent = "Delete";
+        if (!document.getElementById("delete-confirmation").hidden) {
+            document.getElementById("cancel-delete-button").focus();
+        }
+    }
+}
 
 const importState = {
     previewId: null,
@@ -1059,7 +1239,7 @@ async function confirmImport() {
         updateImportControls();
 
         try {
-            await Promise.all([loadAnalytics(), loadLeads()]);
+            await refreshDashboard();
         } catch (refreshError) {
             console.error("Dashboard refresh failed after import:", refreshError);
             showImportStatus(
@@ -1085,18 +1265,36 @@ async function confirmImport() {
     }
 }
 
-async function fetchDashboardJson(url) {
+async function fetchDashboardJson(url, options = {}) {
     const controller = new AbortController();
     const timeoutId = window.setTimeout(
         () => controller.abort(),
         15000
     );
     try {
-        const response = await fetch(url, { signal: controller.signal });
+        const response = await fetch(url, {
+            ...options,
+            signal: controller.signal,
+        });
         if (!response.ok) {
-            throw new Error(`Dashboard request failed (HTTP ${response.status}).`);
+            let detail = "";
+            try {
+                const payload = await response.json();
+                detail = payload.detail || "";
+            } catch {
+                detail = "";
+            }
+            const requestError = new Error(
+                detail || `Dashboard request failed (HTTP ${response.status}).`
+            );
+            requestError.status = response.status;
+            throw requestError;
         }
-        return await response.json();
+        try {
+            return await response.json();
+        } catch {
+            throw new Error("The server returned an unreadable dashboard response.");
+        }
     } catch (error) {
         if (controller.signal.aborted) {
             throw new Error("The dashboard refresh timed out. Please try again.");
@@ -1107,13 +1305,7 @@ async function fetchDashboardJson(url) {
     }
 }
 
-async function loadAnalytics() {
-
-    const data = await fetchDashboardJson(
-        `${API_BASE}/analytics/summary`
-    );
-
-
+function renderAnalytics(data) {
     document.getElementById("total-leads").textContent =
         data.total_leads;
 
@@ -1137,43 +1329,55 @@ async function loadAnalytics() {
         data.cold_leads;
 
 
-    const total = data.total_leads;
-
-
+    const total = data.total_leads || 0;
     document.getElementById("hot-bar").style.width =
-        `${(data.hot_leads / total) * 100}%`;
+        `${total ? (data.hot_leads / total) * 100 : 0}%`;
 
     document.getElementById("warm-bar").style.width =
-        `${(data.warm_leads / total) * 100}%`;
+        `${total ? (data.warm_leads / total) * 100 : 0}%`;
 
     document.getElementById("cold-bar").style.width =
-        `${(data.cold_leads / total) * 100}%`;
-
+        `${total ? (data.cold_leads / total) * 100 : 0}%`;
 
     document.getElementById("hot-percentage").textContent =
-        `${Math.round((data.hot_leads / total) * 100)}%`;
+        `${total ? Math.round((data.hot_leads / total) * 100) : 0}%`;
 }
 
 
-async function loadLeads() {
-
-    const data = await fetchDashboardJson(
-        `${API_BASE}/leads`
-    );
-
-    renderLeads(data.leads);
+async function refreshDashboard() {
+    try {
+        const [analytics, leadData] = await Promise.all([
+            fetchDashboardJson(`${API_BASE}/analytics/summary`),
+            fetchDashboardJson(`${API_BASE}/leads`),
+        ]);
+        renderAnalytics(analytics);
+        dashboardState.leads = leadData.leads;
+        renderFilteredLeads();
+        showDashboardStatus("");
+    } catch (error) {
+        document.getElementById("total-leads").textContent = "—";
+        document.getElementById("hot-leads").textContent = "—";
+        document.getElementById("conversion-rate").textContent = "—";
+        document.getElementById("pipeline-value").textContent = "—";
+        document.getElementById("hot-count").textContent = "—";
+        document.getElementById("warm-count").textContent = "—";
+        document.getElementById("cold-count").textContent = "—";
+        document.getElementById("hot-percentage").textContent = "—";
+        ["hot-bar", "warm-bar", "cold-bar"].forEach(id => {
+            document.getElementById(id).style.width = "0%";
+        });
+        dashboardState.leads = [];
+        renderFilteredLeads();
+        throw error;
+    }
 }
 
 
 function renderLeads(leads) {
-
     const table = document.getElementById("leads-table");
-
-    table.innerHTML = "";
-
+    table.replaceChildren();
 
     leads.forEach(lead => {
-
         const row = document.createElement("tr");
         row.className = "lead-row";
 
@@ -1215,17 +1419,78 @@ function renderLeads(leads) {
         }
         priorityCell.appendChild(priority);
 
+        const actionsCell = document.createElement("td");
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "lead-row-delete";
+        deleteButton.textContent = "×";
+        deleteButton.title = "Delete lead";
+        deleteButton.setAttribute(
+            "aria-label",
+            `Delete lead ${lead.company_name}`
+        );
+        deleteButton.addEventListener("click", event => {
+            event.stopPropagation();
+            requestLeadDeletion(lead.lead_id, deleteButton);
+        });
+        actionsCell.appendChild(deleteButton);
+
         row.append(
             companyCell,
             industryCell,
             locationCell,
             dealSizeCell,
             scoreCell,
-            priorityCell
+            priorityCell,
+            actionsCell
         );
         table.appendChild(row);
         row.addEventListener("click", () => openLeadDetails(lead.lead_id));
     });
+
+    if (!leads.length) {
+        const emptyRow = document.createElement("tr");
+        const emptyCell = document.createElement("td");
+        emptyCell.colSpan = 7;
+        emptyCell.className = "loading";
+        emptyCell.textContent = "No leads match the current filters.";
+        emptyRow.appendChild(emptyCell);
+        table.appendChild(emptyRow);
+    }
+}
+
+
+function renderFilteredLeads() {
+    const query = document.getElementById("search-input").value
+        .trim()
+        .toLowerCase();
+    const filtered = dashboardState.leads.filter(lead => {
+        const matchesPriority = !dashboardState.hotOnly ||
+            String(lead.priority).toUpperCase() === "HOT";
+        const searchableText = [
+            lead.company_name,
+            lead.industry,
+            lead.location,
+        ].map(value => String(value || "").toLowerCase());
+        return matchesPriority &&
+            (!query || searchableText.some(value => value.includes(query)));
+    });
+    document.getElementById("clear-hot-filter").hidden = !dashboardState.hotOnly;
+    document.getElementById("hot-leads-card").setAttribute(
+        "aria-pressed",
+        String(dashboardState.hotOnly)
+    );
+    renderLeads(filtered);
+}
+
+
+function showDashboardStatus(message, kind = "status") {
+    const status = document.getElementById("dashboard-status");
+    status.textContent = message;
+    status.className = kind === "error"
+        ? "dashboard-status is-error"
+        : "dashboard-status";
+    status.hidden = !message;
 }
 
 
@@ -1243,40 +1508,50 @@ function formatCurrency(value) {
 }
 
 
-document
-    .getElementById("search-input")
-    .addEventListener("input", async function(event) {
-
-        const query =
-            event.target.value.toLowerCase();
-
-
-        const response = await fetch(
-            `${API_BASE}/leads`
-        );
-
-        const data = await response.json();
-
-
-        const filtered = data.leads.filter(
-            lead =>
-                lead.company_name
-                    .toLowerCase()
-                    .includes(query)
-                ||
-                lead.industry
-                    .toLowerCase()
-                    .includes(query)
-                ||
-                lead.location
-                    .toLowerCase()
-                    .includes(query)
-        );
-
-
-        renderLeads(filtered);
-
-    });
+document.getElementById("search-input").addEventListener("input", renderFilteredLeads);
+document.getElementById("total-leads-card").addEventListener("click", () => {
+    dashboardState.hotOnly = false;
+    document.getElementById("search-input").value = "";
+    renderFilteredLeads();
+});
+document.getElementById("hot-leads-card").addEventListener("click", () => {
+    dashboardState.hotOnly = !dashboardState.hotOnly;
+    renderFilteredLeads();
+});
+document.getElementById("clear-hot-filter").addEventListener("click", () => {
+    dashboardState.hotOnly = false;
+    renderFilteredLeads();
+});
+document.getElementById("conversion-rate-card").addEventListener("click", () => {
+    document.getElementById("metric-explanation-text").textContent =
+        "Conversion rate is converted leads divided by all leads, multiplied by 100. A lead counts as converted when its converted field is true.";
+    document.getElementById("metric-explanation").hidden = false;
+});
+document.getElementById("pipeline-value-card").addEventListener("click", () => {
+    document.getElementById("metric-explanation-text").textContent =
+        "Pipeline value is the sum of the deal_size field for all leads, regardless of their priority or conversion status.";
+    document.getElementById("metric-explanation").hidden = false;
+});
+document.getElementById("metric-explanation-close").addEventListener("click", () => {
+    document.getElementById("metric-explanation").hidden = true;
+});
+document.getElementById("lead-modal-delete").addEventListener("click", event => {
+    event.stopPropagation();
+    requestLeadDeletion(event.currentTarget.dataset.leadId, event.currentTarget);
+});
+document.getElementById("cancel-delete-button").addEventListener(
+    "click",
+    () => closeDeleteConfirmation()
+);
+document.getElementById("confirm-delete-button").addEventListener(
+    "click",
+    deleteSelectedLead
+);
+document.getElementById("delete-confirmation").addEventListener("click", event => {
+    if (event.target === event.currentTarget) {
+        closeDeleteConfirmation();
+    }
+});
 
 
 document.getElementById("import-leads-button").addEventListener("click", openImportModal);
@@ -1290,8 +1565,10 @@ document.getElementById("csv-file-input").addEventListener("change", handleImpor
 document.getElementById("import-cancel-button").addEventListener("click", closeImportModal);
 document.getElementById("import-confirm-button").addEventListener("click", confirmImport);
 
-loadAnalytics();
-loadLeads();
+refreshDashboard().catch(error => {
+    console.error("Dashboard load failed:", error);
+    showDashboardStatus(error.message || "Dashboard data could not be loaded.", "error");
+});
 
 </script>
 
